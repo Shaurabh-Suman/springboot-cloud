@@ -1,5 +1,6 @@
 package com.spring.cloud.app.service.impl;
 
+import com.spring.cloud.app.exception.InvalidInputException;
 import com.spring.cloud.app.service.FibonacciService;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ public class FibonacciServiceImpl implements FibonacciService {
         List<Integer> result = new ArrayList<>();
 
         if (n <= 0) {
-            return result;
+            throw  new InvalidInputException("Invalid Input: Number cannot be negative");
         }
 
         int a = 0;
