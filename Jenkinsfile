@@ -87,23 +87,23 @@ pipeline {
                     do
                       echo "Attempt $i..."
 
-                      # Check container is running
-                      STATUS=$(docker inspect -f '{{.State.Running}}' springboot-app 2>/dev/null || echo "false")
+                      # Direct container check (NO NETWORK DEPENDENCY)
+                      CONTAINER=$(docker inspect -f '{{.State.Running}}' springboot-app 2>/dev/null || echo "false")
 
-                      echo "Container Running: $STATUS"
+                      echo "Container Running: $CONTAINER"
 
-                      if [ "$STATUS" = "true" ]; then
+                      if [ "$CONTAINER" = "true" ]; then
 
                         echo "Container is running ✔"
 
-                        # Now check app inside container network
-                        curl -f http://localhost:8088/actuator/health && exit 0
+                        # Run curl INSIDE container (THIS IS THE FIX)
+                        docker exec springboot-app curl -f http://localhost:8088/actuator/health && exit 0
                       fi
 
                       sleep 3
                     done
 
-                    echo "Application failed to start"
+                    echo "Application failed"
                     docker logs springboot-app --tail 50
                     exit 1
                 '''
