@@ -86,7 +86,7 @@ pipeline {
                     for i in {1..10}
                     do
                       echo "Attempt $i..."
-                      curl -f http://localhost:9096/actuator/health && exit 0
+                      curl -f http://host.docker.internal:9096/actuator/health && exit 0
                       sleep 5
                     done
 
