@@ -73,14 +73,26 @@ pipeline {
             steps {
                 sh '''
                     docker rm -f springboot-app || true
-                    docker run -d -p 9096:8088 --name springboot-app $DOCKER_IMAGE
+                    docker run -d --restart unless-stopped -p 9096:8088 --name springboot-app $DOCKER_IMAGE
                 '''
             }
         }
 
         stage('Smoke Test') {
             steps {
-                sh 'curl -f http://localhost:9096/actuator/health'
+                sh '''
+                    echo "Waiting for application to start..."
+
+                    for i in {1..10}
+                    do
+                      echo "Attempt $i..."
+                      curl -f http://localhost:9096/actuator/health && exit 0
+                      sleep 5
+                    done
+
+                    echo "Application did not start"
+                    exit 1
+                '''
             }
         }
     }
