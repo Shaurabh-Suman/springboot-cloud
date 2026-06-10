@@ -43,6 +43,22 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-local') {
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=spring-cloud-app'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 sh "docker build -t $DOCKER_IMAGE ."
