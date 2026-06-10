@@ -83,11 +83,11 @@ pipeline {
                 sh '''
                     echo "Waiting for Spring Boot..."
 
-                    for i in {1..20}
+                    for i in $(seq 1 30)
                     do
-                      echo "Attempt $i..."
+                      echo "Attempt $i"
 
-                      STATUS=$(docker exec springboot-app curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/actuator/health)
+                      STATUS=$(docker exec springboot-app curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/actuator/health || echo "000")
 
                       echo "HTTP Status: $STATUS"
 
