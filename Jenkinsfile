@@ -46,14 +46,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
-                    withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                            mvn sonar:sonar \
-                            -Dsonar.projectKey=spring-cloud-app \
-                            -Dsonar.host.url=http://host.docker.internal:9000 \
-                            -Dsonar.login=$SONAR_TOKEN
-                        '''
-                    }
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=spring-cloud-app'
                 }
             }
         }
