@@ -45,7 +45,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-local') {
+                withSonarQubeEnv('sonar-server') {
                     sh 'mvn sonar:sonar -Dsonar.projectKey=spring-cloud-app'
                 }
             }
