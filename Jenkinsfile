@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'   // Make sure Maven is configured in Jenkins
-        jdk 'JDK17'     // Match your Spring Boot version
+        maven 'Maven3'   // Make sure Maven is configured in Jenkins
+        jdk 'JDK21'     // Match your Spring Boot version
     }
 
     environment {
