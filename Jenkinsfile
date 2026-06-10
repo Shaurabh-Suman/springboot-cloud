@@ -81,23 +81,19 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 sh '''
-                    echo "Waiting for Spring Boot container..."
+                    echo "Waiting for Spring Boot..."
 
-                    for i in {1..30}
+                    for i in {1..20}
                     do
                       echo "Attempt $i..."
 
-                      # Direct container check (NO NETWORK DEPENDENCY)
-                      CONTAINER=$(docker inspect -f '{{.State.Running}}' springboot-app 2>/dev/null || echo "false")
+                      STATUS=$(docker exec springboot-app curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/actuator/health)
 
-                      echo "Container Running: $CONTAINER"
+                      echo "HTTP Status: $STATUS"
 
-                      if [ "$CONTAINER" = "true" ]; then
-
-                        echo "Container is running ✔"
-
-                        # Run curl INSIDE container (THIS IS THE FIX)
-                        docker exec springboot-app curl -f http://localhost:8088/actuator/health && exit 0
+                      if [ "$STATUS" = "200" ]; then
+                        echo "Application is UP ✔"
+                        exit 0
                       fi
 
                       sleep 3
