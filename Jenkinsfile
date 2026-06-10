@@ -71,13 +71,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8080:8080 --name springboot-app $DOCKER_IMAGE'
+                sh '''
+                    docker rm -f springboot-app || true
+                    docker run -d -p 8088:8088 --name springboot-app $DOCKER_IMAGE
+                '''
             }
         }
 
         stage('Smoke Test') {
             steps {
-                sh 'curl -f http://localhost:8080/ || exit 1'
+                sh 'curl -f http://localhost:8088/actuator/health'
             }
         }
     }
