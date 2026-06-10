@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven'   // Make sure Maven is configured in Jenkins
+        jdk 'JDK17'     // Match your Spring Boot version
+    }
+
+    environment {
+        DOCKER_IMAGE = "9708156765/springboot-cloud:latest"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/Shaurabh-Suman/springboot-cloud.git'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                sh 'mvn clean'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t $DOCKER_IMAGE ."
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh "docker push $DOCKER_IMAGE"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker run -d -p 8080:8080 --name springboot-app $DOCKER_IMAGE'
+            }
+        }
+
+        stage('Smoke Test') {
+            steps {
+                sh 'curl -f http://localhost:8080/ || exit 1'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline SUCCESS 🚀'
+        }
+        failure {
+            echo 'Pipeline FAILED ❌'
+        }
+    }
+}
