@@ -58,18 +58,12 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                script {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        def qg = waitForQualityGate()
-                        echo "Quality Gate Status: ${qg.status}"
-
-                        if (qg.status != 'OK') {
-                            error "Pipeline failed due to Quality Gate: ${qg.status}"
-                        }
-                    }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
+
         stage('Docker Build') {
             steps {
                 sh "docker build -t $DOCKER_IMAGE ."
