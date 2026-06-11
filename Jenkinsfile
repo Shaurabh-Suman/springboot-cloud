@@ -46,7 +46,7 @@ pipeline {
       stage('SonarQube Analysis') {
           steps {
               withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                  withSonarQubeEnv('SonarQube') {
+                  withSonarQubeEnv('sonar-server') {
                       sh '''
                           mvn clean verify sonar:sonar \
                           -Dsonar.login=$SONAR_TOKEN
