@@ -33,7 +33,7 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean test'
             }
         }
 
@@ -43,13 +43,26 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar-server') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=spring-cloud-app'
-                }
-            }
-        }
+      stage('SonarQube Analysis') {
+          steps {
+              withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
+
+                  sh '''
+                      echo "TOKEN CHECK START"
+                      if [ -z "$SONAR_TOKEN" ]; then
+                          echo "TOKEN IS EMPTY - FAILURE"
+                          exit 1
+                      else
+                          echo "TOKEN IS PRESENT"
+                      fi
+
+                      mvn clean verify sonar:sonar \
+                      -Dsonar.login=$SONAR_TOKEN \
+                      -Dsonar.host.url=http://host.docker.internal:9000
+                  '''
+              }
+          }
+      }
 
         stage('Quality Gate') {
             steps {
