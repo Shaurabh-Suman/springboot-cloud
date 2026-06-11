@@ -46,20 +46,13 @@ pipeline {
       stage('SonarQube Analysis') {
           steps {
               withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-
-                  sh '''
-                      echo "TOKEN CHECK START"
-                      if [ -z "$SONAR_TOKEN" ]; then
-                          echo "TOKEN IS EMPTY - FAILURE"
-                          exit 1
-                      else
-                          echo "TOKEN IS PRESENT"
-                      fi
-
-                      mvn clean verify sonar:sonar \
-                      -Dsonar.login=$SONAR_TOKEN \
-                      -Dsonar.host.url=http://host.docker.internal:9000
-                  '''
+                  withSonarQubeEnv('SonarQube') {
+                      sh '''
+                          mvn clean verify sonar:sonar \
+                          -Dsonar.login=$SONAR_TOKEN \
+                          -Dsonar.host.url=http://host.docker.internal:9000
+                      '''
+                  }
               }
           }
       }
@@ -78,7 +71,6 @@ pipeline {
                 }
             }
         }
-
         stage('Docker Build') {
             steps {
                 sh "docker build -t $DOCKER_IMAGE ."
