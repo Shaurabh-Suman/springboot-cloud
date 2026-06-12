@@ -56,20 +56,6 @@ pipeline {
             }
         }
 
-        stage('Debug Token') {
-            steps {
-                withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        echo "TOKEN LENGTH:"
-                        echo -n $SONAR_TOKEN | wc -c
-
-                        echo "TOKEN PREFIX:"
-                        echo -n $SONAR_TOKEN | cut -c1-6
-                    '''
-                }
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
