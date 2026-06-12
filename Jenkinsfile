@@ -112,6 +112,27 @@ pipeline {
             }
         }
 
+        stage('K8s Deployment') {
+            steps {
+                sh '''
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+
+                    kubectl rollout restart deployment/spring-cloud-app
+                '''
+            }
+        }
+
+        stage('Verify K8s Deployment') {
+            steps {
+                sh '''
+                    kubectl get pods
+                    kubectl get svc
+                    kubectl get deployment
+                '''
+            }
+        }
+
         stage('Smoke Test') {
             steps {
                 sh '''
@@ -147,6 +168,9 @@ pipeline {
         }
         failure {
             echo 'Pipeline FAILED ❌'
+        }
+        always {
+            cleanWs()
         }
     }
 }

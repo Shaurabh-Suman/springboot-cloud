@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: spring-cloud-app
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: spring-cloud-app
+
+  template:
+    metadata:
+      labels:
+        app: spring-cloud-app
+
+    spec:
+      containers:
+        - name: spring-cloud-app
+          image: 9708156765/springboot-cloud:latest
+
+          ports:
+            - containerPort: 8088
