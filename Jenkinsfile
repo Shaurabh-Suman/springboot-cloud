@@ -62,7 +62,7 @@ pipeline {
                     withSonarQubeEnv('sonar-server') {
                         sh '''
                             mvn clean verify sonar:sonar \
-                            -Dsonar.login=$SONAR_TOKEN \
+                            -Dsonar.token=$SONAR_TOKEN \
                             -Dsonar.host.url=http://sonarqube:9000
                         '''
                     }
