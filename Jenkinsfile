@@ -56,18 +56,19 @@ pipeline {
             }
         }
 
-      stage('SonarQube Analysis') {
-          steps {
-              withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                  withSonarQubeEnv('sonar-server') {
-                      sh '''
-                          mvn clean verify sonar:sonar \
-                          -Dsonar.login=$SONAR_TOKEN
-                      '''
-                  }
-              }
-          }
-      }
+     stage('SonarQube Analysis') {
+         steps {
+             withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
+                 withSonarQubeEnv('sonar-server') {
+                     sh """
+                         mvn clean verify sonar:sonar \
+                         -Dsonar.host.url=http://sonarqube:9000 \
+                         -Dsonar.token=$SONAR_TOKEN
+                     """
+                 }
+             }
+         }
+     }
 
         stage('Quality Gate') {
             steps {
