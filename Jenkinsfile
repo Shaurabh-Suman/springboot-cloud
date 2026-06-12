@@ -37,6 +37,19 @@ pipeline {
             }
         }
 
+        stage('JaCoCo Coverage Check') {
+            steps {
+                jacoco(
+                    execPattern: 'target/jacoco.exec',
+                    classPattern: 'target/classes',
+                    sourcePattern: 'src/main/java',
+                    minimumLineCoverage: '90',
+                    minimumBranchCoverage: '90',
+                    minimumInstructionCoverage: '90'
+                )
+            }
+        }
+
         stage('Package') {
             steps {
                 sh 'mvn package -DskipTests'
