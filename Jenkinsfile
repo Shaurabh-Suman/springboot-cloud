@@ -56,18 +56,32 @@ pipeline {
             }
         }
 
-      stage('SonarQube Analysis') {
-          steps {
-              withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                  withSonarQubeEnv('sonar-server') {
-                      sh '''
-                          mvn clean verify sonar:sonar \
-                          -Dsonar.login=$SONAR_TOKEN
-                      '''
-                  }
-              }
-          }
-      }
+        stage('Debug Token') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        echo "TOKEN LENGTH:"
+                        echo -n $SONAR_TOKEN | wc -c
+
+                        echo "TOKEN PREFIX:"
+                        echo -n $SONAR_TOKEN | cut -c1-6
+                    '''
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('sonar-server') {
+                        sh '''
+                            mvn clean verify sonar:sonar \
+                            -Dsonar.login=$SONAR_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
 
         stage('Quality Gate') {
             steps {
