@@ -23,10 +23,14 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<!-- Sonar expects JaCoCo XML here -->
+		<!-- Sonar coverage config -->
+		<sonar.host.url>http://sonarqube:9000</sonar.host.url>
+
+		<!-- IMPORTANT: correct Jacoco report path -->
 		<sonar.coverage.jacoco.xmlReportPaths>
 			target/site/jacoco/jacoco.xml
 		</sonar.coverage.jacoco.xmlReportPaths>
+
 	</properties>
 
 	<!-- ================= DEPENDENCIES ================= -->
@@ -72,7 +76,7 @@
 	<build>
 		<plugins>
 
-			<!-- Spring Boot Plugin -->
+			<!-- Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -88,22 +92,20 @@
 				</configuration>
 			</plugin>
 
-			<!-- ================= SUREFIRE (CRITICAL FIX) ================= -->
+			<!-- Surefire -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 			</plugin>
 
-			<!-- ================= JACOCO (FINAL FIXED VERSION) ================= -->
+			<!-- JaCoCo -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version>
-
 				<executions>
 
-					<!-- Attach agent -->
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
@@ -111,7 +113,6 @@
 						</goals>
 					</execution>
 
-					<!-- Generate report AFTER tests -->
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -121,6 +122,13 @@
 					</execution>
 
 				</executions>
+			</plugin>
+
+			<!-- ✅ SONAR FIX (CRITICAL) -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>4.0.0.4121</version>
 			</plugin>
 
 		</plugins>
