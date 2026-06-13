@@ -116,20 +116,15 @@ pipeline {
         stage('K8s Deployment') {
             steps {
                 sh '''
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    alias k="kubectl --insecure-skip-tls-verify=true"
 
-                    kubectl rollout restart deployment/spring-cloud-app
-                '''
-            }
-        }
+                    k apply -f k8s/deployment.yaml
+                    k apply -f k8s/service.yaml
+                    k rollout restart deployment/spring-cloud-app
 
-        stage('Verify K8s Deployment') {
-            steps {
-                sh '''
-                    kubectl get pods
-                    kubectl get svc
-                    kubectl get deployment
+                    k get pods
+                    k get svc
+                    k get deployment
                 '''
             }
         }
