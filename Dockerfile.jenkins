@@ -2,9 +2,9 @@ FROM jenkins/jenkins:lts-jdk21
 
 USER root
 
-# Install utilities
+# Install utilities + Docker CLI
 RUN apt-get update && \
-    apt-get install -y curl wget unzip && \
+    apt-get install -y curl wget unzip docker.io && \
     apt-get clean
 
 # Install kubectl
@@ -12,7 +12,7 @@ RUN curl -LO "https://dl.k8s.io/release/v1.34.0/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
     rm kubectl
 
-# Verify installation
+# Verify kubectl
 RUN kubectl version --client
 
 # Install Helm
@@ -20,5 +20,9 @@ RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | b
 
 # Verify Helm
 RUN helm version
+
+# Create docker group and add Jenkins user
+RUN groupadd -f docker && \
+    usermod -aG docker jenkins
 
 USER jenkins
