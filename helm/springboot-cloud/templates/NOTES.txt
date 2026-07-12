@@ -1,0 +1,26 @@
+Spring Boot Cloud application has been deployed successfully.
+
+Release Name:
+{{ .Release.Name }}
+
+Chart:
+{{ .Chart.Name }}
+
+To check pods:
+
+kubectl get pods
+
+
+To check service:
+
+kubectl get svc
+
+
+To access the application locally:
+
+kubectl port-forward svc/{{ include "springboot-cloud.fullname" . }} 8088:8088
+
+
+Then access:
+
+http://localhost:8088/api/fibonacci?n=5

@@ -111,6 +111,7 @@ pipeline {
             }
         }
 
+       /*
         stage('K8s Deployment') {
             steps {
                 sh '''
@@ -123,6 +124,26 @@ pipeline {
                     k get pods
                     k get svc
                     k get deployment
+                '''
+            }
+        }
+        */
+
+        stage('Helm Deployment') {
+            steps {
+                sh '''
+                    export KUBECONFIG=/root/.kube/config
+
+                    helm lint ./helm/springboot-cloud
+
+                    helm upgrade --install springboot-cloud ./helm/springboot-cloud \
+                        --kube-insecure-skip-tls-verify
+
+                    kubectl --insecure-skip-tls-verify=true get pods
+                    kubectl --insecure-skip-tls-verify=true get svc
+                    kubectl --insecure-skip-tls-verify=true get deployment
+
+                    helm list
                 '''
             }
         }

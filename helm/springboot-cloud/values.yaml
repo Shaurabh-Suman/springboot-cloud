@@ -1,0 +1,30 @@
+replicaCount: 2
+
+image:
+  repository: 9708156765/springboot-cloud
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8088
+  targetPort: 8088
+
+container:
+  port: 8088
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  SPRING_PROFILES_ACTIVE: docker
