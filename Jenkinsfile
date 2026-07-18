@@ -132,7 +132,7 @@ pipeline {
         stage('Helm Deployment') {
             steps {
                 sh '''
-                    export KUBECONFIG=/root/.kube/config
+                    export KUBECONFIG=/var/jenkins_home/.kube/config
 
                     helm lint ./helm/springboot-cloud
 
