@@ -151,13 +151,21 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 sh '''
-                    echo "Waiting for Spring Boot..."
+                    echo "Waiting for Spring Boot Kubernetes pod..."
+
+                    kubectl rollout status deployment/springboot-cloud --timeout=120s
+
+                    echo "Starting port forward..."
+
+                    kubectl port-forward svc/springboot-cloud 8088:8088 > /tmp/port-forward.log 2>&1 &
+
+                    sleep 10
 
                     for i in $(seq 1 30)
                     do
                       echo "Attempt $i"
 
-                      STATUS=$(docker exec springboot-app curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/actuator/health || echo "000")
+                      STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/actuator/health || echo "000")
 
                       echo "HTTP Status: $STATUS"
 
@@ -170,7 +178,10 @@ pipeline {
                     done
 
                     echo "Application failed"
-                    docker logs springboot-app --tail 50
+
+                    kubectl get pods
+                    kubectl logs deployment/springboot-cloud --tail=50
+
                     exit 1
                 '''
             }
