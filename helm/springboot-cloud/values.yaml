@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: 9708156765/springboot-cloud
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: latest
 
 imagePullSecrets: []
@@ -28,3 +28,31 @@ resources:
 
 env:
   SPRING_PROFILES_ACTIVE: docker
+
+#########################################################
+# MySQL Configuration
+#########################################################
+
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+
+  database: springCloudAppDB
+
+  username: springuser
+
+  password: Spring@123
+
+  rootPassword: Root@123
+
+  service:
+    type: ClusterIP
+    port: 3306
+
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 2Gi

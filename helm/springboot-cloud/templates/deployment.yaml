@@ -31,5 +31,20 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.env.SPRING_PROFILES_ACTIVE }}
 
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/{{ .Values.mysql.database }}
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-username
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-password
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
