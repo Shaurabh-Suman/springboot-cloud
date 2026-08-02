@@ -29,10 +29,16 @@ spec:
             - containerPort: {{ .Values.container.port }}
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.env.SPRING_PROFILES_ACTIVE }}
+              valueFrom:
+                configMapKeyRef:
+                  name: springboot-config
+                  key: SPRING_PROFILES_ACTIVE
 
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/{{ .Values.mysql.database }}
+              valueFrom:
+                configMapKeyRef:
+                  name: springboot-config
+                  key: SPRING_DATASOURCE_URL
 
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
