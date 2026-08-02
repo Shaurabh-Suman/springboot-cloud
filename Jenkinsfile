@@ -56,8 +56,8 @@ pipeline {
             }
         }
 
-      stage('SonarQube Analysis') {
-          steps {
+        stage('SonarQube Analysis') {
+           steps {
               withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
                   withSonarQubeEnv('sonar-server') {
                       sh '''
@@ -66,8 +66,8 @@ pipeline {
                       '''
                   }
               }
-          }
-      }
+           }
+        }
         stage('Quality Gate') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
