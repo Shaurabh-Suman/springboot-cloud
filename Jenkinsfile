@@ -160,11 +160,11 @@ pipeline {
 
                     echo "Waiting for Spring Boot Kubernetes pod..."
 
-                    kubectl rollout status deployment/springboot-cloud --timeout=120s
+                    kubectl --insecure-skip-tls-verify=true rollout status deployment/springboot-cloud --timeout=120s
 
                     echo "Starting port forward..."
 
-                    kubectl port-forward svc/springboot-cloud 8088:8088 > /tmp/port-forward.log 2>&1 &
+                    kubectl --insecure-skip-tls-verify=true port-forward svc/springboot-cloud 8088:8088 > /tmp/port-forward.log 2>&1 &
 
                     sleep 10
 
@@ -186,8 +186,8 @@ pipeline {
 
                     echo "Application failed"
 
-                    kubectl get pods
-                    kubectl logs deployment/springboot-cloud --tail=50
+                    kubectl --insecure-skip-tls-verify=true get pods
+                    kubectl --insecure-skip-tls-verify=true logs deployment/springboot-cloud --tail=50
 
                     exit 1
                 '''
