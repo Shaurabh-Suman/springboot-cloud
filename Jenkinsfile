@@ -148,7 +148,7 @@ pipeline {
                     kubectl --insecure-skip-tls-verify=true get svc
                     kubectl --insecure-skip-tls-verify=true get deployment
 
-                    helm list
+                    helm list --kube-insecure-skip-tls-verify
                 '''
             }
         }
