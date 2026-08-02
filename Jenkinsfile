@@ -101,7 +101,10 @@ pipeline {
                 sh "docker push $DOCKER_IMAGE"
             }
         }
-
+       /*
+       Not needed because Helm/Kubernetes is now responsible for deploying and
+       managing our Spring Boot container,
+       so docker run creates a separate deployment outside Kubernetes.
         stage('Deploy') {
             steps {
                 sh '''
@@ -110,6 +113,7 @@ pipeline {
                 '''
             }
         }
+        */
 
        /*
         stage('K8s Deployment') {
@@ -137,7 +141,8 @@ pipeline {
                     helm lint ./helm/springboot-cloud
 
                     helm upgrade --install springboot-cloud ./helm/springboot-cloud \
-                        --kube-insecure-skip-tls-verify
+                        --kube-insecure-skip-tls-verify \
+                        --wait
 
                     kubectl --insecure-skip-tls-verify=true get pods
                     kubectl --insecure-skip-tls-verify=true get svc
@@ -151,6 +156,8 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 sh '''
+                    export KUBECONFIG=/var/jenkins_home/.kube/config
+
                     echo "Waiting for Spring Boot Kubernetes pod..."
 
                     kubectl rollout status deployment/springboot-cloud --timeout=120s
