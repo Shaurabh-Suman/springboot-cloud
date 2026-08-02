@@ -61,7 +61,8 @@ pipeline {
               withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
                   withSonarQubeEnv('sonar-server') {
                       sh '''
-                          mvn clean verify sonar:sonar \
+                          mvn clean verify \
+                          org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar \
                           -Dsonar.token=$SONAR_TOKEN
                       '''
                   }
