@@ -2,6 +2,7 @@ package Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 class LeadersInArray{
 
@@ -9,7 +10,6 @@ class LeadersInArray{
     static ArrayList<Integer> leaders(int[] arr) {
         ArrayList<Integer> result = new ArrayList<>();
         int n = arr.length;
-
         // Start with the rightmost element
         int maxRight = arr[n - 1];
 
@@ -32,11 +32,22 @@ class LeadersInArray{
     }
 
     public static void main(String[] args) {
-        int[] arr = { 16, 17, 4, 3, 5, 2 };
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the length of the array.");
+        int arrLen = sc.nextInt();
+        int[] arr = new int[arrLen];
+       // int[] arr = { 16, 17, 4, 3, 5, 2 };
+        System.out.println("Enter the elements of the array.");
+        for (int i = 0; i < arrLen; i++) {
+            System.out.println("Enter the element " + (i + 1) + ".");
+            arr[i] = sc.nextInt();
+        }
         ArrayList<Integer> result = leaders(arr);
+        System.out.println("The leaders in array are:");
         for (int res : result) {
             System.out.print(res + " ");
         }
         System.out.println();
+        sc.close();
     }
 }
