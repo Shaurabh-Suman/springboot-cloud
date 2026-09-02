@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+
+metadata:
+  name: springboot-cloud
+
+  labels:
+    release: monitoring
+
+spec:
+
+  selector:
+    matchLabels:
+      {{- include "springboot-cloud.selectorLabels" . | nindent 6 }}
+
+  endpoints:
+
+    - port: http
+      path: /actuator/prometheus
+      interval: 15s
