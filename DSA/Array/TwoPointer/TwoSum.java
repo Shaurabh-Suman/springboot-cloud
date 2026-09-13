@@ -12,7 +12,23 @@ public class TwoSum {
         while (left < right) {
             int sum = arr[left] + arr[right];
             if (sum == target) {
-                result.add(Arrays.asList(arr[left], arr[right]));                left++;
+                result.add(Arrays.asList(arr[left], arr[right]));
+
+                /*
+                //arr=[2, 2, 3, 3], target = 5.
+                 Result without skipping: [[2, 3], [2, 3]] (Incorrect if unique pairs are required).
+
+                 Result with skipping: [[2, 3]] (Correct).
+                 */
+                // Skip duplicate values for left pointer
+                while (left < right && arr[left] == arr[left + 1]) {
+                    left++;
+                }
+                // Skip duplicate values for right pointer
+                while (left < right && arr[right] == arr[right - 1]) {
+                    right--;
+                }
+                left++;
                 right--;
             }else if (sum < target) {
                 left++;
