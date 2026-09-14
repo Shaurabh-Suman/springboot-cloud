@@ -1,4 +1,4 @@
-package Array.TwoPointer;
+package Array.TwoPointer.OppositeDirection;
 
 import java.util.*;
 
