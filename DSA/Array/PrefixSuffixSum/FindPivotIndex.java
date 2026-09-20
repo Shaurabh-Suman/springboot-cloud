@@ -8,15 +8,27 @@ public class FindPivotIndex {
             totalSum += num;
         }
         int leftSum = 0;
-        int pivotIndex = -1;
+       // int pivotIndex = -1;
+        // Try every index as a candidate pivot
         for(int i = 0; i < arr.length; i++){
-           int rightSum=totalSum-leftSum-arr[i];
+            // Remove LEFT and CURRENT from TOTAL.
+            // What remains is the RIGHT sum.
+            int rightSum=totalSum-leftSum-arr[i];
+
+            // Is the current index a pivot?
             if(leftSum==rightSum){
+                /*
                 pivotIndex = i;
+                return pivotIndex;
+                 */
+                return i;
             }
+            // Current element now becomes part of the LEFT side
             leftSum+=arr[i];
         }
-        return pivotIndex;
+        // No pivot index found
+       // return pivotIndex;
+        return -1;
     }
     public static void main(String[] args) {
         int[] arr = {1, 3, 5, 2, 2};
