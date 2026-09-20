@@ -21,10 +21,16 @@ public class BuildPrefixSuffixSum {
     }
     public static void main(String[] args) {
     int[] arr= {3, 2, 5, 1, 4};
+    System.out.println("Original Array: ");
+    for (int num : arr) {
+        System.out.print(num + "  ");
+    }
+    System.out.print(System.lineSeparator());
     System.out.println("Required Prefix Sum: ");
         for(int num : buildPrefixSum(arr)) {
             System.out.print(num + "  ");
         }
+
         System.out.print(System.lineSeparator());
         System.out.println("Required Suffix Sum: ");
         for (int num : buildSuffixSum(arr)) {
