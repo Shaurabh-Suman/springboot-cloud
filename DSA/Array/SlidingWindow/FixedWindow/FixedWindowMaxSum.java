@@ -1,4 +1,4 @@
-package Array.SlidingWindow;
+package Array.SlidingWindow.FixedWindow;
 
 public class FixedWindowMaxSum {
     private static int maxSum(int[] arr, int k) {
