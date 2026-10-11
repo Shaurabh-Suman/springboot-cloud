@@ -5,6 +5,9 @@ import com.spring.cloud.app.repository.EmployeeRepository;
 import com.spring.cloud.app.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -20,16 +23,22 @@ import java.util.List;
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "employees", allEntries = true),
+            @CacheEvict(value = "allEmployees", allEntries = true)
+    })
     public Employee saveEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
 
     @Override
+    @Cacheable("allEmployees")
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
     @Override
+    @Cacheable(value = "employees", key = "#id")
     public Employee getEmployeeById(Long id) {
         String hashedId = hashId(id);
         log.info("Fetching employee with id: {}", hashedId);
@@ -38,6 +47,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "employees", allEntries = true),
+            @CacheEvict(value = "allEmployees", allEntries = true)
+    })
     public Employee updateEmployee(Long id, Employee employee) {
         Employee existing = getEmployeeById(id);
         String hashedId = hashId(id);
