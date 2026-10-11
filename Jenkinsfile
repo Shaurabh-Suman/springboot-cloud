@@ -33,7 +33,9 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                sh 'mvn clean test'
+                withEnv(['TEST_REDIS_HOST=redis']) {
+                    sh 'mvn clean test'
+                }
             }
         }
 

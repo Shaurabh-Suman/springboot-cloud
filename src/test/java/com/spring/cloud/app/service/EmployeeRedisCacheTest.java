@@ -29,7 +29,10 @@ Separate classes are recommended for clarity, but not mandatory.
         "spring.datasource.username=sa",
         "spring.datasource.password=",
         "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+
+        "spring.data.redis.host=${TEST_REDIS_HOST:localhost}",
+        "spring.data.redis.port=6379"
 })
 class EmployeeRedisCacheTest {
 
