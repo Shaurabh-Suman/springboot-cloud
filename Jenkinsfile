@@ -34,7 +34,7 @@ pipeline {
         stage('Unit Test') {
             steps {
                 withEnv(['TEST_REDIS_HOST=redis']) {
-                    sh 'mvn clean test -Dtest.redis.host=$TEST_REDIS_HOST'
+                    sh 'mvn clean verify sonar:sonar -Dtest.redis.host=$TEST_REDIS_HOST -Dsonar.token=$SONAR_TOKEN'
                 }
             }
         }
