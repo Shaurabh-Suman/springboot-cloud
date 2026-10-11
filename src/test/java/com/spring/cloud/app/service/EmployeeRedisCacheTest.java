@@ -2,14 +2,14 @@ package com.spring.cloud.app.service;
 
 import com.spring.cloud.app.model.Employee;
 import com.spring.cloud.app.repository.EmployeeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -51,12 +51,22 @@ class EmployeeRedisCacheTest {
 
         assertNotNull(cache, "Cache 'employees' must exist");
 
+        // Remove cached values before every test.
         cache.clear();
+
+        // Reset repository mock interactions and stubbing.
         reset(repository);
     }
 
     @Test
     void getEmployeeById_ShouldCacheResult() {
+
+        // Diagnostic: verify that Spring caching can use a proxy.
+        assertTrue(
+                AopUtils.isAopProxy(employeeService),
+                "EmployeeService must be a Spring AOP proxy for @Cacheable to work"
+        );
+
         // Arrange
         Long id = 1L;
 
@@ -71,23 +81,25 @@ class EmployeeRedisCacheTest {
         when(repository.findById(id))
                 .thenReturn(Optional.of(employee));
 
-        // Act: first call should retrieve the employee from the repository.
+        // Act: first call should invoke the repository.
         Employee first = employeeService.getEmployeeById(id);
 
-        // Act: second call should retrieve the employee from the cache.
+        // Act: second call should return the cached result.
         Employee second = employeeService.getEmployeeById(id);
 
         // Assert: both calls return the expected employee.
         assertNotNull(first);
         assertNotNull(second);
+
         assertEquals("John", first.getName());
         assertEquals("John", second.getName());
 
-        // Assert: repository should be called only once.
+        // Assert: repository should be called exactly once.
         verify(repository, times(1)).findById(id);
 
         // Assert: employee should be present in the cache.
         Cache cache = cacheManager.getCache("employees");
+
         assertNotNull(cache);
         assertNotNull(cache.get(id));
     }
