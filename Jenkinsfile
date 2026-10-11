@@ -33,12 +33,15 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                withCredentials([string(
-                    credentialsId: 'docker-sonar-token',
-                    variable: 'SONAR_TOKEN'
-                )]) {
-                    withEnv(['TEST_REDIS_HOST=redis']) {
-                        sh 'mvn clean verify sonar:sonar -Dtest.redis.host=$TEST_REDIS_HOST -Dsonar.token=$SONAR_TOKEN'
+                withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('sonar-server') {
+                        withEnv(['TEST_REDIS_HOST=redis']) {
+                            sh '''
+                                mvn clean verify sonar:sonar \
+                                    -Dtest.redis.host=$TEST_REDIS_HOST \
+                                    -Dsonar.token=$SONAR_TOKEN
+                            '''
+                        }
                     }
                 }
             }
@@ -64,16 +67,19 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-           steps {
-              withCredentials([string(credentialsId: 'docker-sonar-token', variable: 'SONAR_TOKEN')]) {
-                  withSonarQubeEnv('sonar-server') {
-                      sh '''
-                          mvn clean verify sonar:sonar \
-                          -Dsonar.token=$SONAR_TOKEN
-                      '''
-                  }
-              }
-           }
+                    steps {
+                        withCredentials([string(
+                            credentialsId: 'docker-sonar-token',
+                            variable: 'SONAR_TOKEN'
+                        )]) {
+                            withSonarQubeEnv('sonar-server') {
+                                sh '''
+                                    mvn sonar:sonar \
+                                        -Dsonar.token=$SONAR_TOKEN
+                                '''
+                            }
+                        }
+                    }
         }
         stage('Quality Gate') {
             steps {
