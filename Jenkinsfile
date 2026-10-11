@@ -33,8 +33,13 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                withEnv(['TEST_REDIS_HOST=redis']) {
-                    sh 'mvn clean verify sonar:sonar -Dtest.redis.host=$TEST_REDIS_HOST -Dsonar.token=$SONAR_TOKEN'
+                withCredentials([string(
+                    credentialsId: 'docker-sonar-token',
+                    variable: 'SONAR_TOKEN'
+                )]) {
+                    withEnv(['TEST_REDIS_HOST=redis']) {
+                        sh 'mvn clean verify sonar:sonar -Dtest.redis.host=$TEST_REDIS_HOST -Dsonar.token=$SONAR_TOKEN'
+                    }
                 }
             }
         }
