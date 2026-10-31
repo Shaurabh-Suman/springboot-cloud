@@ -56,3 +56,18 @@ mysql:
     storageClass: ""
     accessMode: ReadWriteOnce
     size: 2Gi
+
+#########################################################
+# Redis Configuration
+#########################################################
+
+redis:
+  image:
+    repository: redis
+    tag: "7-alpine"
+    pullPolicy: IfNotPresent
+
+  service:
+    name: redis
+    type: ClusterIP
+    port: 6379

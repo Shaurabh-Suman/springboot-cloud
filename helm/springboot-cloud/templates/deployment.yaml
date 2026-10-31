@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: mysql-password
+            - name: SPRING_DATA_REDIS_HOST
+              value: {{ .Values.redis.service.name | quote }}
+
+            - name: SPRING_DATA_REDIS_PORT
+              value: {{ .Values.redis.service.port | quote }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
