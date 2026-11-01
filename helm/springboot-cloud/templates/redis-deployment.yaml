@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 
@@ -28,3 +29,36 @@ spec:
             - containerPort: 6379
               name: redis
               protocol: TCP
+
+          # 1. STARTUP PROBE
+          # Wait until Redis starts responding.
+          startupProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 30
+
+          # 2. LIVENESS PROBE
+          # Check whether Redis is responding.
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          # 3. READINESS PROBE
+          # Check whether Redis can accept connections.
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3

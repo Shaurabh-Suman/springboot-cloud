@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 
@@ -25,8 +26,40 @@ spec:
         - name: springboot-cloud
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
           ports:
             - containerPort: {{ .Values.container.port }}
+
+          # 1. STARTUP PROBE
+          # Checks whether Spring Boot has finished starting.
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.container.port }}
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 30
+
+          # 2. LIVENESS PROBE
+          # Checks whether the application should continue running.
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.container.port }}
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          # 3. READINESS PROBE
+          # Checks whether the application can accept requests.
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.container.port }}
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
           env:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
@@ -51,6 +84,7 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: mysql-password
+
             - name: SPRING_DATA_REDIS_HOST
               value: {{ .Values.redis.service.name | quote }}
 
